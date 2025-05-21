@@ -1,0 +1,19 @@
+last_price = None
+
+def should_buy(price):
+    global last_price
+    if last_price is None:
+        last_price = price
+        return False
+    decision = price < last_price * 0.97
+    last_price = price
+    return decision
+
+def should_sell(price):
+    global last_price
+    if last_price is None:
+        last_price = price
+        return False
+    decision = price > last_price * 1.03
+    last_price = price
+    return decision
