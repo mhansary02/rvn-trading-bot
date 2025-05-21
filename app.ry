@@ -1,0 +1,22 @@
+from flask import Flask, request
+from strategy import should_buy, should_sell
+from coinex_api import place_order
+from telegram import send_message
+
+app = Flask(__name__)
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+    data = request.json
+    symbol = data.get("symbol", "BTCUSDT")
+    price = float(data.get("price", 0))
+
+    if should_buy(price):
+        place_order("buy", symbol)
+        send_message(f"Buy signal for {symbol} at {price}")
+    elif should_sell(price):
+        place_order("sell", symbol)
+        send_message(f"Sell signal for {symbol} at {price}")
+    else:
+        send_message(f"No action for {symbol} at {price}")
+    return "OK"
